@@ -39,19 +39,6 @@ class Notice:
         self.browser.find_element_by_xpath("//*[@id='visual']/div/div[2]/div[2]/div[1]/a").click()
         time.sleep(1)
 
-    def get_todo_list1(self):
-        self.create_soup()
-        self.tables = self.soup.find_all("li",attrs={"class":"_6q8Mxga _1dyDTaI _1jLfonx _9PzDC58"})
-        
-        print(len(self.tables))
-        # ERROR : points, deadline 's class names are overlaped
-        for self.assignment ,self.table in enumerate(self.tables):   
-            self.todo = self.table.find("span", attrs={"class":"_3jLMUSh _2QIthAo YQshPr7 _2WOMSfA"}).get_text()
-            self.classname = self.table.find("span", attrs={"class":"_3jLMUSh _2QIthAo _1OPt-vm YQshPr7 _2WOMSfA _1bDCVu4"}).get_text()
-            self.deadline = self.table.find("li", attrs={"class":"_6q8Mxga _1dyDTaI KYqAFSl nNydarj OIBUwxd"}).get_text()   
-            self.assignment = Todo(self.todo, self.classname, self.deadline)
-            print(self.assignment)
-
     def get_todo_list2(self):
         self.create_soup()
         self.tables = self.soup.find_all("li",attrs={"class":"_6q8Mxga _1dyDTaI _1jLfonx _9PzDC58"})
