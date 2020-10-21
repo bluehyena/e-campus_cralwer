@@ -1,5 +1,5 @@
-import requests
 import time
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
@@ -19,13 +19,18 @@ class Notice:
         self.__student_id = env.student_id
         self.__password = env.password
         self.headers = {"User-Agent":env.User_Agent}
-        self.browser = webdriver.Chrome()
+        self.options = webdriver.ChromeOptions()
+        self.options.headless = True
+        self.options.add_argument("window-size=1920x1080")
+        self.options.add_argument(f"user-agent={env.User_Agent}")
+        self.browser = webdriver.Chrome(options=self.options)
 
     def create_soup(self):
         self.soup = BeautifulSoup(self.browser.page_source, "lxml")
 
     def login(self, url):
         self.browser.get(url)
+        self.browser.maximize_window()
         self.id_box = self.browser.find_element_by_id("login_user_id")
         self.password_box = self.browser.find_element_by_id("login_user_password")
         self.id_box.send_keys(self.__student_id)
@@ -38,8 +43,11 @@ class Notice:
         time.sleep(1)
         self.browser.find_element_by_xpath("//*[@id='visual']/div/div[2]/div[2]/div[1]/a").click()
         time.sleep(1)
+        self.more_button = self.browser.find_element_by_xpath("//*[@id='right-side']/div[2]/div/button/span/span")
+        if self.more_button:
+            self.more_button.click()
 
-    def get_todo_list2(self):
+    def print_todo_list(self):
         self.create_soup()
         self.tables = self.soup.find_all("li",attrs={"class":"_6q8Mxga _1dyDTaI _1jLfonx _9PzDC58"})
         
@@ -54,9 +62,12 @@ class Notice:
     def run(self, url):
         self.login(url)
         self.move_to_dashboard()
-        self.get_todo_list2()
+        self.print_todo_list()
 
 if __name__ == "__main__":
     url = "https://e-campus.khu.ac.kr/xn-sso/login.php?auto_login=&sso_only=&cvs_lgn=&return_url=https%3A%2F%2Fe-campus.khu.ac.kr%2Fxn-sso%2Fgw-cb.php%3Ffrom%3D%26login_type%3Dstandalone%26return_url%3Dhttps%253A%252F%252Fe-campus.khu.ac.kr%252Flogin%252Fcallback"
     e_campus = Notice()
-    e_campus.run(url)
+    try:
+        e_campus.run(url)
+    except:
+        print("[ERROR]")
